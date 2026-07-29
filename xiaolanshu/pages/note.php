@@ -25,7 +25,11 @@ $comments = db()->fetchAll(
 );
 ?>
 
-<div class="note-detail">
+<div class="note-page">\n    <div class="note-top-nav">
+        <a href="index.php" class="note-back-btn">&#10094; 返回</a>
+        <span class="note-top-title">笔记详情</span>
+        <span></span>
+    </div>
     <div class="note-image-carousel" id="imageCarousel">
         <div class="carousel-track" id="carouselTrack">
             <?php foreach ($images as $idx => $img): ?>
