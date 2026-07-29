@@ -1,0 +1,12 @@
+# 数据库
+*.db
+# 用户上传内容
+uploads/avatars/*.jpg
+uploads/avatars/*.png
+uploads/notes/*.jpg
+uploads/notes/*.png
+uploads/groups/*.jpg
+uploads/groups/*.png
+# 临时文件
+*.log
+data/*.db
