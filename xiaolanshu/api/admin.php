@@ -150,6 +150,13 @@ switch ($action) {
         jsonResponse(['success' => true, 'status' => $status]);
         break;
 
+    case 'toggle_audit':
+        $current = db()->fetch("SELECT value FROM settings WHERE key = 'audit_enabled'");
+        $newValue = ($current && $current['value'] === '1') ? '0' : '1';
+        db()->query("UPDATE settings SET value = :v WHERE key = 'audit_enabled'", [':v' => $newValue]);
+        jsonResponse(['success' => true, 'enabled' => ($newValue === '1')]);
+        break;
+
     case 'comments':
         $page = max(1, (int)($_GET['p'] ?? 1));
         $search = trim($_GET['q'] ?? '');

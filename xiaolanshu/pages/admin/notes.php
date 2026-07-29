@@ -5,7 +5,7 @@ require __DIR__ . '/../../includes/header_simple.php';
 <div class="admin-wrapper">
     <?php include __DIR__ . '/_sidebar.php'; ?>
     <div class="admin-content">
-        <h1>笔记管理</h1>
+        <h1>笔记管理 <button class="admin-btn" style="font-size:12px;padding:4px 12px;background:#333;color:#fff;margin-left:10px" onclick="toggleAudit()">审核开关</button></h1>
         <div class="admin-table-wrap">
             <div class="admin-toolbar">
                 <div class="admin-search-box">
@@ -69,6 +69,13 @@ async function deleteNote(nid, title) {
     });
     var d = await r.json();
     if (d.success) loadNotes();
+}
+async function toggleAudit() {
+    var r = await fetch('index.php?api=admin&action=toggle_audit');
+    var d = await r.json();
+    if (d.success) {
+        alert('笔记审核已' + (d.enabled ? '开启' : '关闭'));
+    }
 }
 loadNotes(1);
 </script>

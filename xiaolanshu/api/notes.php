@@ -39,8 +39,12 @@ switch ($action) {
             $imagePaths[] = 'uploads/notes/default_cover.png';
         }
 
+        $auditSetting = db()->fetch("SELECT value FROM settings WHERE key = 'audit_enabled'");
+        $auditEnabled = ($auditSetting && $auditSetting['value'] === '1');
+        $defaultStatus = $auditEnabled ? 'pending' : 'approved';
+
         $nid = db()->insert(
-            "INSERT INTO notes (user_id, title, content, images, tags, category, location, status) VALUES (:uid, :t, :c, :imgs, :tags, :cat, :loc, 'pending')",
+            "INSERT INTO notes (user_id, title, content, images, tags, category, location, status) VALUES (:uid, :t, :c, :imgs, :tags, :cat, :loc, :status)",
             [
                 ':uid' => currentUserId(),
                 ':t' => $title,
@@ -49,6 +53,7 @@ switch ($action) {
                 ':tags' => $tags,
                 ':cat' => $category,
                 ':loc' => $location,
+                ':status' => $defaultStatus,
             ]
         );
 
