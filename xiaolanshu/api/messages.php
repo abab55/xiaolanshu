@@ -25,17 +25,17 @@ if ($action === 'list') {
     // Filter: only conversations with mutual follows (friends) remain after delete
     $chatRaw = db()->fetchAll(
         "SELECT m.id, m.from_user_id, m.to_user_id, m.content, m.type, m.is_read, m.created_at,
-                u.username as from_username, u.avatar as from_avatar,
+                p.username as peer_username, p.avatar as peer_avatar,
                 CASE WHEN m.from_user_id = :uid THEN m.to_user_id ELSE m.from_user_id END as peer_id,
                 NULL as status, NULL as fr_id, NULL as fr_message
          FROM messages m
-         JOIN users u ON u.id = m.from_user_id
+         LEFT JOIN users p ON p.id = CASE WHEN m.from_user_id = :uid THEN m.to_user_id ELSE m.from_user_id END
          JOIN (
              SELECT MAX(id) as max_id
              FROM messages
              WHERE type = 'chat' AND (to_user_id = :uid2 OR from_user_id = :uid3)
              GROUP BY CASE WHEN from_user_id < to_user_id THEN from_user_id || '_' || to_user_id
-                      ELSE to_user_id || '_' || from_user_id END
+                          ELSE to_user_id || '_' || from_user_id END
          ) latest ON m.id = latest.max_id
          WHERE m.type = 'chat' AND (m.to_user_id = :uid4 OR m.from_user_id = :uid5)
          ORDER BY m.created_at DESC",
