@@ -253,8 +253,8 @@ function renderItem(m) {
         const avatar = m.from_avatar ? 'uploads/avatars/' + m.from_avatar : 'assets/images/default-avatar.svg';
         const peer = m.peer_id || m.from_user_id;
         const isFromMe = m.from_user_id == <?= currentUserId() ?>;
-        const displayName = isFromMe ? '你' : (m.from_username || '');
-        const msgPrefix = isFromMe ? '你: ' : '';
+        const displayName = isFromMe ? '' : (m.from_username || '');
+        const msgPrefix = isFromMe ? '' : '';
         return `<div class="msg-item ${m.is_read == 0 ? 'msg-unread' : ''}" onclick="location.href='index.php?page=chat&peer=${peer}&name=${encodeURIComponent(m.from_username)}'">
             <img src="${avatar}" class="msg-avatar" alt="">
             <div class="msg-content-wrapper">
