@@ -40,7 +40,7 @@ switch ($action) {
         }
 
         $nid = db()->insert(
-            "INSERT INTO notes (user_id, title, content, images, tags, category, location) VALUES (:uid, :t, :c, :imgs, :tags, :cat, :loc)",
+            "INSERT INTO notes (user_id, title, content, images, tags, category, location, status) VALUES (:uid, :t, :c, :imgs, :tags, :cat, :loc, 'pending')",
             [
                 ':uid' => currentUserId(),
                 ':t' => $title,
@@ -85,7 +85,7 @@ switch ($action) {
         $note = db()->fetch(
             "SELECT n.*, u.username, u.avatar, u.bio as user_bio, u.notes_count as user_notes_count,
                     u.followers_count as user_followers, u.following_count as user_following
-             FROM notes n JOIN users u ON n.user_id = u.id WHERE n.id = :id",
+             FROM notes n JOIN users u ON n.user_id = u.id WHERE n.id = :id AND n.status = 'approved'",
             [':id' => $noteId]
         );
         if (!$note) jsonError('笔记不存在');
@@ -113,11 +113,11 @@ switch ($action) {
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $sql = "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id";
+        $sql = "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved'";
         $params = [];
 
         if ($category) {
-            $sql .= " WHERE n.category = :cat";
+            $sql .= " AND n.category = :cat";
             $params[':cat'] = $category;
         }
 
@@ -142,7 +142,7 @@ switch ($action) {
             "SELECT n.*, u.username, u.avatar FROM notes n
              JOIN users u ON n.user_id = u.id
              JOIN collections c ON c.note_id = n.id
-             WHERE c.user_id = :uid
+             WHERE c.user_id = :uid AND n.status = 'approved'
              ORDER BY c.created_at DESC LIMIT 20",
             [':uid' => $userId]
         );
@@ -160,7 +160,7 @@ switch ($action) {
             "SELECT n.*, u.username, u.avatar FROM notes n
              JOIN users u ON n.user_id = u.id
              JOIN likes l ON l.note_id = n.id
-             WHERE l.user_id = :uid
+             WHERE l.user_id = :uid AND n.status = 'approved'
              ORDER BY l.created_at DESC LIMIT 20",
             [':uid' => $userId]
         );
@@ -178,7 +178,7 @@ switch ($action) {
             "SELECT DISTINCT n.*, u.username, u.avatar FROM notes n
              JOIN users u ON n.user_id = u.id
              JOIN comments c ON c.note_id = n.id
-             WHERE c.user_id = :uid
+             WHERE c.user_id = :uid AND n.status = 'approved'
              ORDER BY c.created_at DESC LIMIT 20",
             [':uid' => $userId]
         );

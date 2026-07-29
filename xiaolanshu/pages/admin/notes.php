@@ -16,7 +16,7 @@ require __DIR__ . '/../../includes/header_simple.php';
             <div style="overflow-x:auto">
                 <table class="admin-table">
                     <thead><tr>
-                        <th>ID</th><th>标题</th><th>作者</th><th>分类</th><th>点赞</th><th>收藏</th><th>评论</th><th>浏览</th><th>发布时间</th><th>操作</th>
+                        <th>ID</th><th>标题</th><th>作者</th><th>分类</th><th>点赞</th><th>收藏</th><th>评论</th><th>浏览</th><th>状态</th><th>发布时间</th><th>操作</th>
                     </tr></thead>
                     <tbody id="noteTbody"></tbody>
                 </table>
@@ -45,13 +45,22 @@ async function loadNotes(p) {
             '<td>'+n.collects_count+'</td>'+
             '<td>'+n.comments_count+'</td>'+
             '<td>'+n.views_count+'</td>'+
+            '<td><span class="admin-status '+(n.status === 'approved' ? 'admin-status-ok' : (n.status === 'rejected' ? 'admin-status-reject' : 'admin-status-pending'))+'">'+(n.status || 'pending')+'</span></td>'+
             '<td style="font-size:11px;color:#999">'+n.created_at+'</td>'+
-            '<td><button class="admin-btn admin-btn-danger admin-btn-sm" onclick="deleteNote('+n.id+',\''+n.title.replace(/'/g,"\\'")+'\')">删除</button></td>'+
+            '<td><button class="admin-btn admin-btn-sm" onclick="approveNote('+n.id+',\'approved\')">通过</button> <button class="admin-btn admin-btn-danger admin-btn-sm" onclick="approveNote('+n.id+',\'rejected\')">拒绝</button> <button class="admin-btn admin-btn-danger admin-btn-sm" onclick="deleteNote('+n.id+',\''+n.title.replace(/'/g,"\\'")+'\')">删除</button></td>'+
             '</tr>';
     }).join('');
     var pages = '';
     for (var i=1;i<=d.pages;i++) pages += '<button '+(i===d.page?'disabled':'')+' onclick="loadNotes('+i+')">'+i+'</button>';
     document.getElementById('notePagination').innerHTML = '<span>共 '+d.total+' 条</span>'+pages;
+}
+async function approveNote(nid, status) {
+    if (!confirm('确定要将笔记状态设置为「'+status+'」吗？')) return;
+    var r = await fetch('index.php?api=admin&action=note_approve',{
+        method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'note_id='+nid+'&status='+status
+    });
+    var d = await r.json();
+    if (d.success) loadNotes();
 }
 async function deleteNote(nid, title) {
     if (!confirm('确定要删除笔记「'+title+'」吗？')) return;

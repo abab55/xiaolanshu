@@ -151,14 +151,12 @@ $comments = db()->fetchAll(
     <?php
     $category = $note['category'];
     $related = db()->fetchAll(
-        "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id
-         WHERE n.id != :id AND n.category = :cat ORDER BY n.likes_count DESC LIMIT 6",
+        "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved' AND n.id != :id AND n.category = :cat ORDER BY n.likes_count DESC LIMIT 6",
         [':id' => $noteId, ':cat' => $category]
     );
     if (!$related) {
         $related = db()->fetchAll(
-            "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id
-             WHERE n.id != :id ORDER BY n.likes_count DESC LIMIT 6",
+            "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved' AND n.id != :id ORDER BY n.likes_count DESC LIMIT 6",
             [':id' => $noteId]
         );
     }

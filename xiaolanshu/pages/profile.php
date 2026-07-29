@@ -85,8 +85,7 @@ if (isLoggedIn() && !$isOwn) {
     <div class="waterfall-container" id="profileNotes">
         <?php
         $notes = db()->fetchAll(
-            "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id
-             WHERE n.user_id = :uid ORDER BY n.created_at DESC LIMIT 20",
+            "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved' AND n.user_id = :uid ORDER BY n.created_at DESC LIMIT 20",
             [':uid' => $profileUserId]
         );
         foreach ($notes as $n) echo renderNoteCard($n);

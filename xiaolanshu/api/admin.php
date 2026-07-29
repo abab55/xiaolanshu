@@ -141,6 +141,15 @@ switch ($action) {
         jsonResponse(['success' => true]);
         break;
 
+    case 'note_approve':
+        $noteId = (int)($_POST['note_id'] ?? 0);
+        $status = ($_POST['status'] ?? 'approved') === 'rejected' ? 'rejected' : 'approved';
+        $note = db()->fetch("SELECT * FROM notes WHERE id = :id", [':id' => $noteId]);
+        if (!$note) jsonError('笔记不存在');
+        db()->query("UPDATE notes SET status = :s WHERE id = :id", [':s' => $status, ':id' => $noteId]);
+        jsonResponse(['success' => true, 'status' => $status]);
+        break;
+
     case 'comments':
         $page = max(1, (int)($_GET['p'] ?? 1));
         $search = trim($_GET['q'] ?? '');

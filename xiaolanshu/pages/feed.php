@@ -16,7 +16,7 @@
 <div class="waterfall-container" id="feed-container">
     <?php
     $category = $_GET['category'] ?? '';
-    $sql = "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id";
+    $sql = "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved'";
     $params = [];
 
     if ($category) {

@@ -67,7 +67,7 @@
         <div class="waterfall-container">
             <?php
             $hot = db()->fetchAll(
-                "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id
+                "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id WHERE n.status = 'approved'
                  ORDER BY n.likes_count DESC LIMIT 20"
             );
             foreach ($hot as $n) echo renderNoteCard($n);

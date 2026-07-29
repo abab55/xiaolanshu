@@ -20,7 +20,7 @@ switch ($action) {
             jsonResponse(['results' => $results, 'has_more' => count($results) >= $limit]);
         } else {
             $sql = "SELECT n.*, u.username, u.avatar FROM notes n JOIN users u ON n.user_id = u.id
-                    WHERE n.title LIKE :q OR n.content LIKE :q2 OR n.tags LIKE :q3
+                    WHERE (n.title LIKE :q OR n.content LIKE :q2 OR n.tags LIKE :q3) AND n.status = 'approved'
                     ORDER BY n.likes_count DESC, n.created_at DESC LIMIT :limit OFFSET :offset";
             $results = db()->fetchAll($sql, [':q' => "%$q%", ':q2' => "%$q%", ':q3' => "%$q%", ':limit' => $limit, ':offset' => $offset]);
             $html = '';
